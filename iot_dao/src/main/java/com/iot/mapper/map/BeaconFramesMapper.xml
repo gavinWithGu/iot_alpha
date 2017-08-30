@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iot.mapper.BeaconFramesMapper">
+
+	<resultMap id="beaconWifi-resultMap" type="BeaconWifi">
+		<id column="_source_mac_address" property="source_mac_address" jdbcType="VARCHAR" />
+		<result column="_frame_id" property="frame_id" jdbcType="VARCHAR" />
+		<result column="_time_received" property="time_received_db" jdbcType="VARCHAR" />
+		<result column="_rssi_at_receiving" property="detected_rssi" jdbcType="VARCHAR" />
+		<result column="_payload" property="payload" jdbcType="VARCHAR" />
+		<result column="_ap_mac_address" property="ap_mac_address" jdbcType="VARCHAR" />
+		<result column="_cloud_received_time" property="cloudReceivedTime"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		b._source_mac_address,b._ap_mac_address,b._frame_id,b._time_received,b._rssi_at_receiving,b._payload
+	</sql>
+
+	<sql id="Where_Clause">
+		<where>
+			1 = 1
+			<if test="source_mac_address_exact != null and source_mac_address_exact != ''">
+				and b._source_mac_address = #{source_mac_address_exact}
+			</if>
+			<if test="source_mac_address != null and source_mac_address != ''">
+				and b._source_mac_address like "%"#{source_mac_address}"%"
+			</if>
+			<if test="frame_id_exact != null and frame_id_exact != ''">
+				and b._frame_id = #{frame_id_exact}
+			</if>
+		</where>
+	</sql>
+
+	<select id="getList" resultMap="beaconWifi-resultMap" parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from beacon_frames b
+		<include refid="Where_Clause" />
+		<if test="start!=null and limit!=null and limit>0">limit #{start},#{limit} </if>
+	</select>
+	
+	<select id="isExist"  resultType="Integer" parameterType="map">
+		select
+		count(1)
+		from beacon_frames b
+		<where>
+			1 = 1
+			<if test="(source_mac_address_exact == null or source_mac_address_exact == '')
+					  and (frame_id_exact == null or frame_id_exact == '')">
+				and 1 <![CDATA[ <> ]]> 1
+			</if>
+			<if test="source_mac_address_exact != null and source_mac_address_exact != ''">
+				and b._source_mac_address = #{source_mac_address_exact}
+			</if>
+			<if test="frame_id_exact != null and frame_id_exact != ''">
+				and b._frame_id = #{frame_id_exact}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getCount" resultType="Integer" parameterType="map">
+		select
+		count(1)
+		from beacon_frames b
+		<include refid="Where_Clause" />
+	</select>
+
+	<insert id="insert" parameterType="BeaconWifi" useGeneratedKeys="false" keyProperty="id">
+		insert into beacon_frames (_source_mac_address,_frame_id,_time_received,_rssi_at_receiving,_payload,_ap_mac_address,_cloud_received_time)
+		values (#{source_mac_address}, #{frame_id}, #{time_received_db},#{detected_rssi},#{payload},#{ap_mac_address},now())
+	</insert>
+	
+	<select id="getLatestMacList" resultMap="beaconWifi-resultMap" parameterType="map">
+		SELECT _source_mac_address,_frame_id ,_cloud_received_time FROM
+		(SELECT _source_mac_address,_frame_id ,_cloud_received_time FROM beacon_frames ORDER BY _cloud_received_time DESC) a
+		GROUP BY _source_mac_address,_frame_id 
+	</select>
+	
+	<select id="getLatestMacAPList" resultMap="beaconWifi-resultMap" parameterType="map">
+		SELECT _source_mac_address,_frame_id,_ap_mac_address ,_cloud_received_time FROM
+		(SELECT _source_mac_address,_frame_id,_ap_mac_address ,_cloud_received_time FROM beacon_frames ORDER BY _cloud_received_time DESC) b
+		GROUP BY _source_mac_address,_ap_mac_address,_frame_id 
+	</select>
+</mapper>

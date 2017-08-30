@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iot.mapper.SensorDataMapper">
+
+	<resultMap id="sensorData-resultMap" type="SensorData">
+		<id column="_source_mac_address" property="sourceMacAddress" jdbcType="VARCHAR" />
+		<result column="_frame_id" property="frameId" jdbcType="VARCHAR" />
+		<result column="_time_received" property="timeReceived" jdbcType="VARCHAR" />
+		<result column="_sensor_type" property="sensorType" jdbcType="VARCHAR" />
+		<result column="_sensor_value" property="sensorValue" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		s._source_mac_address,s._frame_id,s._time_received,s._sensor_type,s._sensor_value
+	</sql>
+
+	<sql id="Where_Clause">
+		<where>
+			1 = 1
+			<if test="source_mac_address_exact != null and source_mac_address_exact != ''">
+				and s._source_mac_address = #{source_mac_address_exact}
+			</if>
+			<if test="source_mac_address != null and source_mac_address != ''">
+				and s._source_mac_address like "%"#{source_mac_address}"%"
+			</if>
+			<if test="frame_id_exact != null and frame_id_exact != ''">
+				and s._frame_id = #{frame_id_exact}
+			</if>
+		</where>
+	</sql>
+
+	<select id="getList" resultMap="sensorData-resultMap" parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from sensor_data s
+		<include refid="Where_Clause" />
+		<if test="start!=null and limit!=null and limit>0">limit #{start},#{limit} </if>
+	</select>
+	
+	<select id="isExist"  resultType="Integer" parameterType="map">
+		select
+		count(1)
+		from sensor_data s
+		<where>
+			1 = 1
+			<if test="(source_mac_address_exact == null or source_mac_address_exact == '')
+					  and (frame_id_exact == null or frame_id_exact == '')">
+				and 1 <![CDATA[ <> ]]> 1
+			</if>
+			<if test="source_mac_address_exact != null and source_mac_address_exact != ''">
+				and s._source_mac_address = #{source_mac_address_exact}
+			</if>
+			<if test="frame_id_exact != null and frame_id_exact != ''">
+				and s._frame_id = #{frame_id_exact}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getCount" resultType="Integer" parameterType="map">
+		select
+		count(1)
+		from sensor_data s
+		<include refid="Where_Clause" />
+	</select>
+
+	<insert id="insert" parameterType="BeaconUniqueInfo">
+		insert into sensor_data (_source_mac_address,_frame_id,_time_received,_sensor_type,_sensor_value)
+		values (#{sourceMacAddress}, #{frameId}, #{timeReceived},#{sensorType},#{sensorValue})
+	</insert>
+	
+	
+	<select id="listlastestBatchSensorData" resultMap="sensorData-resultMap" parameterType="String">
+		select
+		<include refid="Base_Column_List" />
+		from sensor_data s
+		where s._source_mac_address = #{source_mac_address}
+		and s._time_received = 
+		(select s1._time_received  from sensor_data s1
+		where s1._source_mac_address =  #{source_mac_address} 
+		order by s1._time_received desc limit 1)
+	</select>
+	
+	<select id="listHistoryBatchSensorData" resultMap="sensorData-resultMap" parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from sensor_data s
+		where s._source_mac_address = #{sourceMacAddress}
+		and s._time_received in
+		(select s1._time_received  from 
+			(select * from sensor_data s2
+			where s2._source_mac_address = #{sourceMacAddress} 
+			group by s2._time_received
+			order by s2._time_received desc
+			 limit #{limit}
+			)as s1
+		)
+		order by s._time_received asc;
+	</select>
+	
+</mapper>

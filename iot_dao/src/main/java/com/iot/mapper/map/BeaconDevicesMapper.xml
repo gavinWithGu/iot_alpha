@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iot.mapper.BeaconDevicesMapper">
+
+	<resultMap id="beaconInfo-resultMap" type="BeaconInfo">
+		<id column="_id" property="id" jdbcType="VARCHAR" />
+		<result column="_beacon_id" property="beaconId" jdbcType="VARCHAR" />
+		<result column="_content" property="content" jdbcType="VARCHAR" />
+		<result column="_h5_url" property="h5Url" jdbcType="VARCHAR" />
+		<result column="_status" property="status" jdbcType="INTEGER" />
+		<result column="_geo_location" property="location" />
+		<result column="_floor" property="floor" />
+		<result column="_pic_url" property="picUrl" jdbcType="VARCHAR" />
+		<result column="_type_id" property="type"/>
+		<result column="_created_time" property="createdTime" />
+		<result column="_rssi_at_transmitting" property="rssi" />
+		<result column="_owner_id" property="ownerId" />
+		<result column="_beacon_owner_name" property="beaconOwnerName" />
+		<result column="_beacon_owner_email" property="beaconOwnerEmail" />
+		
+		<result column="_type_name" property="typeName"/>
+		
+		<result column="_h5_tmpl_id" property="h5TmplId"/>
+		<result column="_address_detail" property="addressDetail"/>
+		<result column="_bo_address" property="boAddress"/>
+		
+		<result column="_beacon_mac_address" property="beaconMacAddress"/>
+		<result column="_application_type" property="applicationType"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		b._id,b._beacon_id,b._rssi_at_transmitting,b._created_time,b._owner_id,bo._name as _beacon_owner_name,bo._email as _beacon_owner_email,b._h5_url,b._h5_tmpl_id,b._address_detail
+		,bo._address as _bo_address,b._geo_location,b._floor,b._beacon_mac_address
+	</sql>
+	
+	<sql id="Full_Column_List">
+		b._id,b._beacon_id,b._rssi_at_transmitting,b._content,b._h5_url,b._status,b._geo_location,b._floor,b._type_id,b._pic_url,b._created_time,b._h5_tmpl_id,b._address_detail
+		,bc._name as _type_name,b._beacon_mac_address
+	</sql>
+	
+	<sql id="Join_Column_List">
+		b._id,b._beacon_id,bo.rssi
+	</sql>
+
+	<sql id="Beacon_Type_List">
+		b._beacon_mac_address,b._application_type
+	</sql>
+
+	<sql id="Where_Clause">
+		<where>
+			1 = 1
+			<if test="status != null and status != ''">
+				and b._status = #{status}
+			</if>
+			<if test="beaconId != null and beaconId != ''">
+				and b._beacon_id like "%"#{beaconId}"%"
+			</if>
+			<if test="beaconIdEqual != null and beaconIdEqual != ''">
+				and b._beacon_id = #{beaconIdEqual}
+			</if>
+			<if test="beaconMacAddressEqual != null and beaconMacAddressEqual != ''">
+				and b._beacon_mac_address = #{beaconMacAddress}
+			</if>
+			<if test="beaconOwnerIdNu != null and beaconOwnerIdNu != ''">
+				and b._owner_id is null
+			</if>
+			<if test="beaconOwnerId != null and beaconOwnerId != ''">
+				and b._owner_id = #{beaconOwnerId}
+			</if>
+			<if test="currentDay != null and currentDay != ''">
+				and p._available_day_start<![CDATA[ <= ]]>#{currentDay}
+				and p._available_day_end<![CDATA[ >= ]]>#{currentDay}
+			</if>
+			<if test="currentTime != null and currentTime != ''">
+				and p._available_time_start<![CDATA[ <= ]]>#{currentTime}
+				and p._available_time_end<![CDATA[ >= ]]>#{currentTime}
+			</if>
+			<if test="beaconIdArray != null and beaconIdArray != ''">
+				and b._beacon_id in 
+				<foreach item="item" collection="beaconIdArray" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			and (b._status=1 or b._status=2)
+		</where>
+	</sql>
+
+	<select id="getList" resultMap="beaconInfo-resultMap" parameterType="map">
+		select
+		<include refid="Full_Column_List" />
+		from beacon_devices b
+		left join beacon_category bc on b._type_id= bc._id
+		<include refid="Where_Clause" />
+		order by b._created_time desc
+		<if test="start!=null and limit!=null and limit>0">limit #{start},#{limit} </if>
+	</select>
+
+	<select id="getCount" resultType="Integer" parameterType="map">
+		select
+		count(1)
+		from beacon_devices b
+		<include refid="Where_Clause" />
+	</select>
+	
+	<select id="getBeaconTypeList" resultMap="beaconInfo-resultMap" parameterType="map">
+		select
+		<include refid="Beacon_Type_List" />
+		from beacon_devices b
+		<include refid="Where_Clause" />
+		<if test="start!=null and limit!=null and limit>0">limit #{start},#{limit} </if>
+	</select>
+
+	<select id="getOwnshipCount" resultType="Integer" parameterType="map">
+		select
+		count(1)
+		from beacon_devices b
+		left join beacon_owners bo on b._owner_id = bo._id
+		<include refid="Where_Clause" />
+	</select>
+	
+	<select id="getOwnshipList" resultMap="beaconInfo-resultMap" parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from beacon_devices b
+		left join beacon_owners bo on b._owner_id = bo._id
+		left join parking_lot p on p._beacon_id = b._id
+		<include refid="Where_Clause" />
+		order by b._created_time desc
+		<if test="start!=null and limit!=null and limit>0">limit #{start},#{limit} </if>
+	</select>
+	
+	<select id="isExist"  resultType="Integer" parameterType="map">
+		select
+		count(1)
+		from beacon_devices
+		<where>
+			1 = 1
+			<if test="(beaconId == null or beaconId == '') 
+					  and (location == null or location == '')
+					  and (beaconMacAddress == null or beaconMacAddress == '')">
+				and 1 <![CDATA[ <> ]]> 1
+			</if>
+			<if test="beaconId != null and beaconId != ''">
+				and _beacon_id = #{beaconId}
+			</if>
+			<if test="location != null and location != ''">
+				and _geo_location = #{location}
+			</if>
+			<if test="beaconMacAddress != null and beaconMacAddress != ''">
+				and _beacon_mac_address = #{beaconMacAddress}
+			</if>
+			<if test="id != null and id != ''">
+				and _id <![CDATA[ <> ]]> #{id}
+			</if>
+			and (_status= 1 or _status= 2)
+		</where>
+	</select>
+
+	<!-- 
+	<insert id="insert" parameterType="BeaconInfo" useGeneratedKeys="true" keyProperty="id">
+		insert into beacon_devices (_beacon_id,_content,_h5_url,_status,_geo_location,_floor,_pic_url,_created_time)
+		values (#{beaconId}, #{content}, #{h5Url}, 2, #{location}, #{floor}, #{picUrl},now())
+	</insert>
+ 	-->
+
+	<insert id="insert" parameterType="BeaconInfo" useGeneratedKeys="true" keyProperty="id">
+		insert into beacon_devices (_beacon_id,_status,_created_time,_owner_id,_rssi_at_transmitting,_beacon_mac_address)
+		values (#{beaconId}, 2, now(),#{ownerId},#{rssi}, #{beaconMacAddress})
+	</insert>
+	
+	<update id="updateOwnship" parameterType="BeaconInfo">
+		update beacon_devices
+		<set>
+			_rssi_at_transmitting = #{rssi}, _owner_id = #{ownerId}, _beacon_id = #{beaconId},_type_id = #{type}
+		</set>
+		<where>
+			_id = #{id}
+		</where>
+	</update>
+	
+	<update id="update" parameterType="BeaconInfo">
+		update beacon_devices
+		<set>
+			_beacon_id= #{beaconId}
+			<if test="location != null and location != ''">
+				, _geo_location = #{location}
+			</if>
+			<if test="content != null and content != ''">
+				, _content = #{content}
+			</if>
+			<if test="floor != null and floor != ''">
+				, _floor = #{floor}
+			</if>	
+			<if test="h5Url != null and h5Url != ''">
+				, _h5_url = #{h5Url}
+			</if>
+			<if test="picUrl != null and picUrl != ''">
+				, _pic_url = #{picUrl}
+			</if>
+			<if test="type != null and type != ''">
+				, _type_id = #{type}
+			</if>
+			<if test="h5TmplId != null and h5TmplId != ''">
+				, _h5_tmpl_id = #{h5TmplId}
+			</if>
+			<if test="addressDetail != null and addressDetail != ''">
+				, _address_detail = #{addressDetail}
+			</if>
+			<if test="beaconMacAddress != null and beaconMacAddress != ''">
+				, _beacon_mac_address = #{beaconMacAddress}
+			</if>
+		</set>
+		<where>
+			_id = #{id}
+		</where>
+	</update>
+	
+	<update id="delete" parameterType="String">
+		update beacon_devices
+		<set>
+			_status = 3
+		</set>
+		<where>
+			_id in 
+			<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</where>
+	</update>
+	
+	<update id="online" parameterType="Map">
+		update beacon_devices
+		<set>
+			_status = 1
+		</set>
+		<where>
+			_id in
+			<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</where>
+	</update>
+	
+	<update id="offline" parameterType="Map">
+		update beacon_devices
+		<set>
+			_status = 2
+		</set>
+		<where>
+			_id in
+			<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</where>
+	</update>
+	
+	<select id="load" resultMap="beaconInfo-resultMap" parameterType="String">
+		select
+		<include refid="Base_Column_List" />
+		from beacon_devices b
+		left join beacon_owners bo on b._owner_id =bo._id
+		<where>
+			b._id = #{id}
+		</where>
+	</select>
+	
+	<select id="loadByBeaconId" resultMap="beaconInfo-resultMap" parameterType="String">
+		select
+		<include refid="Base_Column_List" />
+		from beacon_devices b
+		left join beacon_owners bo on b._owner_id =bo._id
+		<where>
+			b._beacon_id = #{beaconId}
+		</where>
+	</select>
+	
+	<select id="loadByMacAddress" resultMap="beaconInfo-resultMap" parameterType="String">
+		select b._application_type from beacon_devices b
+		<where>
+			b._beacon_mac_address = #{beaconMacAddress}
+		</where>
+	</select>
+	
+	<select id="listByOwner" resultMap="beaconInfo-resultMap" parameterType="String">
+		select b._beacon_id,b._beacon_mac_address
+		from beacon_devices b
+		right join beacon_ownership bo on b._id = bo.beacon_id
+		<where>
+			bo.owner_id = #{owner_id} 
+		</where>
+	</select>
+	
+</mapper>

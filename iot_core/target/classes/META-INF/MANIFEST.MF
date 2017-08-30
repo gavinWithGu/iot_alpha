@@ -1,0 +1,56 @@
+Manifest-Version: 1.0
+Built-By: Gavin
+Build-Jdk: 1.6.0_13
+Class-Path: . lib/iot_common-0.9.jar lib/iot_model-0.9.jar lib/antlr-2
+ .7.6.jar lib/aopalliance-1.0.jar lib/asm-3.2.jar lib/aspectjrt-1.6.2.
+ jar lib/aspectjweaver-1.6.2.jar lib/c3p0-0.9.1.2.jar lib/cglib-nodep-
+ 2.2.jar lib/commons-beanutils-1.8.3.jar lib/commons-codec-1.3.jar lib
+ /commons-collections-3.2.jar lib/commons-dbcp-1.2.2.jar lib/commons-f
+ ileupload-1.2.1.jar lib/commons-io-1.4.jar lib/commons-lang-2.4.jar l
+ ib/commons-logging-1.0.4.jar lib/commons-pool-1.6.jar lib/commons-val
+ idator-1.1.4.jar lib/dom4j-1.6.1.jar lib/xml-apis-1.0.b2.jar lib/ezmo
+ rph-1.0.6.jar lib/freemarker-2.3.15.jar lib/httpclient-4.3.1.jar lib/
+ httpcore-4.3.1.jar lib/javassist-3.9.0.GA.jar lib/mail-1.4.jar lib/js
+ ch-0.1.44-1.jar lib/jta-1.1.jar lib/log4j-1.2.14.jar lib/mysql-connec
+ tor-java-5.1.35.jar lib/slf4j-log4j12-1.7.5.jar lib/slf4j-api-1.7.5.j
+ ar lib/spring-core-3.2.2.RELEASE.jar lib/ws-commons-util-1.0.2.jar li
+ b/xmlrpc-client-3.1.jar lib/xmlrpc-common-3.1.jar lib/json-lib-2.2.3-
+ jdk15.jar lib/ganymed-ssh2-261.jar lib/spring-data-commons-1.5.1.RELE
+ ASE.jar lib/jcl-over-slf4j-1.7.1.jar lib/spring-context-3.2.2.RELEASE
+ .jar lib/spring-aop-3.2.2.RELEASE.jar lib/spring-expression-3.2.2.REL
+ EASE.jar lib/spring-beans-3.2.2.RELEASE.jar lib/spring-orm-3.2.2.RELE
+ ASE.jar lib/spring-jdbc-3.2.2.RELEASE.jar lib/spring-tx-3.2.2.RELEASE
+ .jar lib/spring-web-3.2.2.RELEASE.jar lib/spring-jms-3.2.2.RELEASE.ja
+ r lib/spring-webmvc-3.2.2.RELEASE.jar lib/servlet-api-2.5.jar lib/spr
+ ing-context-support-3.1.0.RELEASE.jar lib/quartz-1.8.6.jar lib/jstl-1
+ .2.jar lib/commons-lang3-3.4.jar lib/mybatis-spring-1.1.1.jar lib/myb
+ atis-3.1.1.jar lib/jackson-mapper-asl-1.9.13.jar lib/jackson-core-asl
+ -1.9.13.jar lib/zookeeper-3.4.6.jar lib/jline-0.9.94.jar lib/netty-3.
+ 7.0.Final.jar lib/zkclient-0.1.jar lib/jsoup-1.7.3.jar lib/gson-2.2.4
+ .jar lib/jdom-1.0.jar lib/nsp-0.3.12.jar lib/fastjson-1.1.32.jar lib/
+ poi-3.12.jar lib/crawler4j-4.1.jar lib/lidalia-slf4j-ext-1.0.0.jar li
+ b/guava-14.0.1.jar lib/je-5.0.73.jar lib/tika-parsers-1.5.jar lib/tik
+ a-core-1.5.jar lib/vorbis-java-tika-0.1.jar lib/netcdf-4.2-min.jar li
+ b/apache-mime4j-core-0.7.2.jar lib/apache-mime4j-dom-0.7.2.jar lib/co
+ mmons-compress-1.5.jar lib/xz-1.2.jar lib/pdfbox-1.8.4.jar lib/fontbo
+ x-1.8.4.jar lib/jempbox-1.8.4.jar lib/bcmail-jdk15-1.45.jar lib/bcpro
+ v-jdk15-1.45.jar lib/poi-scratchpad-3.10-beta2.jar lib/poi-ooxml-3.10
+ -beta2.jar lib/poi-ooxml-schemas-3.10-beta2.jar lib/xmlbeans-2.3.0.ja
+ r lib/geronimo-stax-api_1.0_spec-1.0.1.jar lib/tagsoup-1.2.1.jar lib/
+ asm-debug-all-4.1.jar lib/isoparser-1.0-RC-1.jar lib/metadata-extract
+ or-2.6.2.jar lib/xmpcore-5.1.2.jar lib/xercesImpl-2.8.1.jar lib/boile
+ rpipe-1.1.0.jar lib/rome-0.9.jar lib/vorbis-java-core-0.1.jar lib/jun
+ iversalchardet-1.0.3.jar lib/jhighlight-1.0.jar lib/shiro-spring-1.2.
+ 3.jar lib/shiro-core-1.2.3.jar lib/shiro-web-1.2.3.jar lib/org.apache
+ .oltu.oauth2.resourceserver-1.0.2.jar lib/org.apache.oltu.oauth2.comm
+ on-1.0.2.jar lib/json-20140107.jar lib/org.apache.oltu.oauth2.resourc
+ eserver-filter-1.0.2.jar lib/memcached-2.5.1.jar lib/spring-integrati
+ on-mqtt-4.1.0.RELEASE.jar lib/spring-integration-core-4.1.0.RELEASE.j
+ ar lib/reactor-core-1.1.4.RELEASE.jar lib/gs-collections-5.1.0.jar li
+ b/gs-collections-api-5.1.0.jar lib/jsr166e-1.0.jar lib/spring-messagi
+ ng-4.1.2.RELEASE.jar lib/spring-retry-1.1.1.RELEASE.jar lib/org.eclip
+ se.paho.client.mqttv3-1.1.1.jar lib/mqtt-client-1.11.jar lib/hawtdisp
+ atch-transport-1.20.jar lib/hawtdispatch-1.20.jar lib/hawtbuf-1.10.ja
+ r lib/disruptor-3.3.2.jar lib/jedis-2.1.0.jar
+Created-By: Maven Integration for Eclipse
+
